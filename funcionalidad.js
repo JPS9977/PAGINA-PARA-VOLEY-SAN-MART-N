@@ -1,28 +1,33 @@
-// script.js
-
-const form = document.getElementById('deportista-form');
-
-form.addEventListener('submit', (event) => {
+document.getElementById('deportista-form').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  const name = document.getElementById('name').value;
-  const surname = document.getElementById('surname').value;
-  const category = document.getElementById('category').value;
-  const image = document.getElementById('image').files[0];
+  const formData = new FormData(this);
 
-  if (!name || !surname || !category || !image) {
-    alert('Por favor, completa todos los campos.');
-    return;
-  }
+  // Convertir FormData a objeto para enviar en formato JSON
+  const data = {
+      name: formData.get('name'),
+      surname: formData.get('surname'),
+      category: formData.get('category'),
+      rama: formData.get('rama'),
+      mes: formData.get('mes'),
+      // Agrega el manejo de imagen según el backend que uses, este es solo un ejemplo:
+      image: formData.get('image') // Esto puede requerir ajustes dependiendo del backend
+  };
 
-  // Aquí puedes agregar lógica para enviar los datos del formulario al servidor
-  console.log('Nombre:', name);
-  console.log('Apellido:', surname);
-  console.log('Categoría:', category);
-  console.log('rama:', rama);
-  console.log('mes-a-pagar:', month);
-  console.log('Imagen:', image);
-
-  alert('Formulario enviado correctamente.');
-  form.reset();
+  fetch('http://localhost:3000/registro', { // Ajusta la URL según tu configuración
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(data => {
+      alert('Registro exitoso');
+      // Aquí podrías agregar lógica para manejar la respuesta del servidor
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('Hubo un error al registrar los datos');
+  });
 });
